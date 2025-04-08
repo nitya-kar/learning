@@ -1,33 +1,7 @@
-   @Bean
-    public RestTemplate restTemplate() throws Exception {
-        String keystorePath = "/google.com.pfx"; // Update with actual path
-        char[] keystorePassword = "xxxxx".toCharArray(); // Update with actual password
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");
+crmAudit.setEventTime(LocalDateTime.now().format(formatter));
 
-        SSLContext sslContext = getSslContext(keystorePath, keystorePassword);
-
-        SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
-                sslContext, NoopHostnameVerifier.INSTANCE);
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(socketFactory)
-                .build();
-
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        return new RestTemplate(factory);
-    }
+Then in XML:
 
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
-
-import javax.net.ssl.*;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
+to_timestamp(#{crmAudit.eventTime, jdbcType=VARCHAR}, 'YYYY-MM-DD"T"HH24:MI:SS.ff6"Z"')
