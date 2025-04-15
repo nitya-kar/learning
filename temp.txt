@@ -1,24 +1,11 @@
-public KeyStore loadKeyStore() throws Exception {
-        // Load from classpath
-        ClassPathResource resource = new ClassPathResource("certificates/mycert.p12");
-
-        // Copy to temp file
-        File tempFile = File.createTempFile("cert", ".p12");
-        try (InputStream is = resource.getInputStream();
-             OutputStream os = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-        }
-
-        System.out.println("Temp file created at: " + tempFile.getAbsolutePath());
-
-        // Load the keystore from the temp file
-        try (InputStream certStream = new FileInputStream(tempFile)) {
-            KeyStore keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(certStream, "your_password".toCharArray());
-            return keyStore;
-        }
-    }
+<build>
+    <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.p12</include>
+            </includes>
+            <filtering>false</filtering> <!-- VERY IMPORTANT -->
+        </resource>
+    </resources>
+</build>
